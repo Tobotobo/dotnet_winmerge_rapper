@@ -313,6 +313,9 @@ public class CommandLineArguments
 
     // /noninteractive
     // TBD
+    public bool NonInteractive { get; set; } = false;
+
+    public string NonInteractiveToArgument { get => NonInteractive ? "/noninteractive" : ""; }
 
     // /noprefs
     // TBD
@@ -406,6 +409,9 @@ public class CommandLineArguments
 
     // /or
     // TBD
+    public string? OR { get; set; } = null;
+
+    public string ORToArgument { get => OR == null ? "" : $"/or \"{OR}\""; }
 
     /// <summary>
     /// conflictfile
@@ -468,7 +474,7 @@ public class CommandLineArguments
             ALToArgument,
             AMToArgument,
             ARToArgument,
-            // [/noninteractive] 
+            NonInteractiveToArgument,
             // [/noprefs] 
             EnableExitCodeToArgument,
             // [/ignorews] 
@@ -487,7 +493,7 @@ public class CommandLineArguments
             MiddlePathToArgument,
             RightPathToArgument,
             OToArgument,
-            // [/or reportpath]
+            ORToArgument,
         };
 
         return arguments.Where(x => x != "").ToArray();

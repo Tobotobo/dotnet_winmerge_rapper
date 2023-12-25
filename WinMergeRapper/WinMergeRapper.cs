@@ -7,7 +7,7 @@ public static class WinMergeRapper
 {
     public static Process Start(CommandLineArguments arguments)
     {
-        var winMergePath = @"C:/winmerge-2.16.36-x64-exe/WinMerge/WinMergeU.exe";
+        var winMergePath = @"C:/Program Files/WinMerge/WinMergeU.exe";
         var winMergeArguments = arguments.ToString();
 
         var process = Process.Start(winMergePath, winMergeArguments);

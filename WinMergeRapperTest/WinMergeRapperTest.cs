@@ -9,7 +9,13 @@ public class WinMergeRapperTest
     {
         var arguments = new CommandLineArguments
         {
+            E = true,
             Minimize = true,
+            NonInteractive = true,
+            U = true,
+            OR = @"C:\新しいフォルダー\output.htm",
+            LeftPath = @"C:\新しいフォルダー\aaa\aaa.xlsx",
+            RightPath = @"C:\新しいフォルダー\bbb\aaa.xlsx",
         };
 
         Console.WriteLine($"argumets = {arguments}");
