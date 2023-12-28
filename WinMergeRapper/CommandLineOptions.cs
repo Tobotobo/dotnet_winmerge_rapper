@@ -1,6 +1,6 @@
 namespace com.github.Tobotobo.DotnetWinMergeRapper;
 
-public class CommandLineArguments
+public class CommandLineOptions : ICloneable
 {
     // コマンドライン - WinMerge 2.16 ヘルプ
     // https://manual.winmerge.org/jp/Command_line.html
@@ -436,6 +436,11 @@ public class CommandLineArguments
         return String.Join(" ", ToArray());
     }
 
+    public string ToArguments()
+    {
+        return ToString();
+    }
+
     public string[] ToArray()
     {
         var arguments = new List<string>
@@ -497,5 +502,10 @@ public class CommandLineArguments
         };
 
         return arguments.Where(x => x != "").ToArray();
+    }
+
+    public object Clone()
+    {
+        return MemberwiseClone();
     }
 }

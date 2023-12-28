@@ -5,12 +5,33 @@ namespace com.github.Tobotobo.DotnetWinMergeRapper;
 
 public static class WinMergeRapper
 {
-    public static Process Start(CommandLineArguments arguments)
+    public static Process Start(CommandLineOptions? commandLineOptions = null, IniFileSettings? iniFileSettings = null)
     {
-        var winMergePath = @"C:/Program Files/WinMerge/WinMergeU.exe";
-        var winMergeArguments = arguments.ToString();
+        var commandCopy = (CommandLineOptions)(commandLineOptions?.Clone() ?? new CommandLineOptions());
+
+        string? tempIniFile = null;
+        if (iniFileSettings != null)
+        {
+            if (commandCopy.IniFile == null)
+            {
+                tempIniFile = Path.GetTempFileName();
+                commandCopy.IniFile = tempIniFile;
+            }
+            iniFileSettings.SaveToFile(commandCopy.IniFile);
+        }
+
+        var winMergePath = Path.Combine(Environment.GetEnvironmentVariable("WINMERGE_PATH") ?? "", "WinMergeU.exe");
+        var winMergeArguments = commandCopy.ToArguments();
 
         var process = Process.Start(winMergePath, winMergeArguments);
+
+        process.Disposed += (sender, e) =>
+        {
+            if (tempIniFile != null)
+            {
+                File.Delete(tempIniFile);
+            }
+        };
 
         return process;
     }
