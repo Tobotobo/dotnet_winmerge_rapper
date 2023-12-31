@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using com.github.Tobotobo.DotnetWinMergeRapper;
 
 namespace com.github.Tobotobo.DotnetWinMergeRapperTest;
@@ -5,8 +6,21 @@ namespace com.github.Tobotobo.DotnetWinMergeRapperTest;
 public class WinMergeRapperTest
 {
     [Fact]
+    public void Test4()
+    {
+        var winMerge = new WinMergeRapper(Path.Combine(Environment.GetEnvironmentVariable("WINMERGE_PATH") ?? "", "WinMergeU.exe"));
+
+        Debug.WriteLine(Environment.CurrentDirectory);
+
+        winMerge.Start("../../../../TestData/a.txt", "../../../../TestData/b.txt").WaitForExit();
+
+    }
+
+    [Fact]
     public void Test3()
     {
+        var winMergeUExePath = Path.Combine(Environment.GetEnvironmentVariable("WINMERGE_PATH") ?? "", "WinMergeU.exe");
+
         var commandLineOptions = new CommandLineOptions
         {
             // E = true,
@@ -23,7 +37,11 @@ public class WinMergeRapperTest
             { "Settings/ScrollToFirst", "1" },
         };
 
-        var process = WinMergeRapper.Start(commandLineOptions, iniFileSettings);
+        var process = WinMergeRapper.Start(
+            winMergeUExePath,
+            commandLineOptions,
+            iniFileSettings);
+
         process.WaitForExit();
     }
 
@@ -44,7 +62,8 @@ public class WinMergeRapperTest
         // Console.WriteLine($"argumets = {options.ToArguments()}");
 
         // var process = WinMergeRapper.Start(options);
-        var process = WinMergeRapper.Start();
+        var winMergeUExePath = Path.Combine(Environment.GetEnvironmentVariable("WINMERGE_PATH") ?? "", "WinMergeU.exe");
+        var process = WinMergeRapper.Start(winMergeUExePath);
         process.WaitForExit();
     }
 
