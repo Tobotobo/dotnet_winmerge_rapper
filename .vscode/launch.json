@@ -10,9 +10,9 @@
             "request": "launch",
             "preLaunchTask": "build",
             // ターゲット フレームワークを変更した場合は、プログラム パスを更新するようにしてください。
-            "program": "${workspaceFolder}/WinMergeRapperTest/bin/Debug/net8.0/WinMergeRapperTest.dll",
+            "program": "${workspaceFolder}/src/WinMergeRapperTest/bin/Debug/net8.0/WinMergeRapperTest.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/WinMergeRapperTest",
+            "cwd": "${workspaceFolder}/src/WinMergeRapperTest",
             // 'console' フィールドの詳細については、https://aka.ms/VSCode-CS-LaunchJson-Console を参照してください
             "console": "internalConsole",
             "stopAtEntry": false

@@ -7,5 +7,6 @@
     "[bat]": {
         "files.encoding": "shiftjis",
         "files.eol": "\r\n",
-    }
+    },
+    "dotnet-test-explorer.testProjectPath": "**/*.sln",
 }

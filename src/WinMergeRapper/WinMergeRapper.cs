@@ -18,15 +18,9 @@ public class WinMergeRapper(string winMergeUExePath)
     public Process Start(string leftPath, string rightPath)
     {
         ArgumentNullException.ThrowIfNull(leftPath);
-        if (!File.Exists(leftPath))
-        {
-            throw new FileNotFoundException(leftPath);
-        }
+        ValidatePath(leftPath);
         ArgumentNullException.ThrowIfNull(rightPath);
-        if (!File.Exists(rightPath))
-        {
-            throw new FileNotFoundException(rightPath);
-        }
+        ValidatePath(rightPath);
 
         var copiedCommandLineOptions = CopyCommandLineOptions(CommandLineOptions);
         copiedCommandLineOptions.LeftPath = leftPath;
@@ -94,5 +88,21 @@ public class WinMergeRapper(string winMergeUExePath)
     private static CommandLineOptions CopyCommandLineOptions(CommandLineOptions commandLineOptions)
     {
         return (CommandLineOptions)commandLineOptions.Clone();
+    }
+
+    private static void ValidatePath(string path)
+    {
+        if (!File.Exists(path) && !Directory.Exists(path))
+        {
+            var extension = Path.GetExtension(path);
+            if (String.IsNullOrEmpty(extension))
+            {
+                throw new DirectoryNotFoundException(path);
+            }
+            else
+            {
+                throw new FileNotFoundException(path);
+            }
+        }
     }
 }

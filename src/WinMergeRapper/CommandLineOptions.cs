@@ -325,9 +325,9 @@ public class CommandLineOptions : ICloneable
     /// 比較結果をプロセス終了コードに設定します。0: 同一, 1: 差異あり, 2: エラー
     /// </summary>
     /// <value></value>
-    public int? EnableExitCode { get; set; } = null;
+    public bool EnableExitCode { get; set; } = false;
 
-    public string EnableExitCodeToArgument { get => EnableExitCode == null ? "" : $"/enableexitcode {EnableExitCode}"; }
+    public string EnableExitCodeToArgument { get => EnableExitCode ? "/enableexitcode" : ""; }
 
     // /ignorews
     // TBD
