@@ -1,9 +1,13 @@
 namespace com.github.Tobotobo.DotnetWinMergeRapper;
 
-public class CommandLineOptions : ICloneable
+public record CommandLineOptions
 {
     // コマンドライン - WinMerge 2.16 ヘルプ
     // https://manual.winmerge.org/jp/Command_line.html
+
+    // 保険
+    public IList<string> HeaderCustomArguments { get; } = new List<string>();
+    public IList<string> FooterCustomArguments { get; } = new List<string>();
 
     /// <summary>
     /// /r
@@ -501,11 +505,9 @@ public class CommandLineOptions : ICloneable
             ORToArgument,
         };
 
-        return arguments.Where(x => x != "").ToArray();
-    }
+        arguments.InsertRange(0, HeaderCustomArguments);
+        arguments.AddRange(FooterCustomArguments);
 
-    public object Clone()
-    {
-        return MemberwiseClone();
+        return arguments.Where(x => x != "").ToArray();
     }
 }
