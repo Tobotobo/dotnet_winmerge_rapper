@@ -11,7 +11,7 @@ public class WinMergeRapper(string winMergeUExePath)
 
     public Process Start()
     {
-        var copiedCommandLineOptions = CopyCommandLineOptions(CommandLineOptions);
+        var copiedCommandLineOptions = CommandLineOptions with { };
         return Start_(WinMergeUExePath, copiedCommandLineOptions, IniFileSettings);
     }
 
@@ -22,9 +22,11 @@ public class WinMergeRapper(string winMergeUExePath)
         ArgumentNullException.ThrowIfNull(rightPath);
         ValidatePath(rightPath);
 
-        var copiedCommandLineOptions = CopyCommandLineOptions(CommandLineOptions);
-        copiedCommandLineOptions.LeftPath = leftPath;
-        copiedCommandLineOptions.RightPath = rightPath;
+        var copiedCommandLineOptions = CommandLineOptions with
+        {
+            LeftPath = leftPath,
+            RightPath = rightPath,
+        };
 
         return Start_(WinMergeUExePath, copiedCommandLineOptions, IniFileSettings);
     }
@@ -35,7 +37,7 @@ public class WinMergeRapper(string winMergeUExePath)
         IniFileSettings? iniFileSettings = null)
     {
         var copiedCommandLineOptions =
-            commandLineOptions == null ? new CommandLineOptions() : CopyCommandLineOptions(commandLineOptions);
+            commandLineOptions == null ? new CommandLineOptions() : commandLineOptions with { };
         var process = Start_(winMergeUExePath, copiedCommandLineOptions, iniFileSettings);
         return process;
     }
@@ -83,11 +85,6 @@ public class WinMergeRapper(string winMergeUExePath)
         };
 
         return process;
-    }
-
-    private static CommandLineOptions CopyCommandLineOptions(CommandLineOptions commandLineOptions)
-    {
-        return (CommandLineOptions)commandLineOptions.Clone();
     }
 
     private static void ValidatePath(string path)
