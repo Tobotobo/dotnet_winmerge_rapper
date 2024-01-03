@@ -11,16 +11,25 @@ public class WinMergeRapper(string winMergeUExePath)
 
     public Process Start()
     {
-        var copiedCommandLineOptions = CommandLineOptions with { };
-        return Start_(WinMergeUExePath, copiedCommandLineOptions, IniFileSettings);
+        return Start(WinMergeUExePath, CommandLineOptions, IniFileSettings);
+    }
+
+    public Process Create()
+    {
+        return Create(WinMergeUExePath, CommandLineOptions, IniFileSettings);
     }
 
     public Process Start(string leftPath, string rightPath)
     {
-        ArgumentNullException.ThrowIfNull(leftPath);
-        ValidatePath(leftPath);
-        ArgumentNullException.ThrowIfNull(rightPath);
-        ValidatePath(rightPath);
+        var process = Create(leftPath, rightPath);
+        process.Start();
+        return process;
+    }
+
+    public Process Create(string leftPath, string rightPath)
+    {
+        ValidatePath(leftPath, nameof(leftPath));
+        ValidatePath(rightPath, nameof(rightPath));
 
         var copiedCommandLineOptions = CommandLineOptions with
         {
@@ -28,7 +37,7 @@ public class WinMergeRapper(string winMergeUExePath)
             RightPath = rightPath,
         };
 
-        return Start_(WinMergeUExePath, copiedCommandLineOptions, IniFileSettings);
+        return Create(WinMergeUExePath, copiedCommandLineOptions, IniFileSettings);
     }
 
     public static Process Start(
@@ -36,46 +45,42 @@ public class WinMergeRapper(string winMergeUExePath)
         CommandLineOptions? commandLineOptions = null,
         IniFileSettings? iniFileSettings = null)
     {
-        var copiedCommandLineOptions =
-            commandLineOptions == null ? new CommandLineOptions() : commandLineOptions with { };
-        var process = Start_(winMergeUExePath, copiedCommandLineOptions, iniFileSettings);
+        var process = Create(winMergeUExePath, commandLineOptions, iniFileSettings);
+        process.Start();
         return process;
     }
 
-    private static Process Start_(
+    public static Process Create(
         string winMergeUExePath,
-        CommandLineOptions commandLineOptions,
-        IniFileSettings? iniFileSettings
-    )
+        CommandLineOptions? commandLineOptions = null,
+        IniFileSettings? iniFileSettings = null)
     {
-        ArgumentNullException.ThrowIfNull(winMergeUExePath);
-        if (!File.Exists(winMergeUExePath))
-        {
-            throw new FileNotFoundException(winMergeUExePath);
-        }
+        ValidateFilePath(winMergeUExePath, nameof(winMergeUExePath));
+
+        var copiedCommandLineOptions =
+            commandLineOptions == null ? new CommandLineOptions() : commandLineOptions with { };
 
         string? tempIniFile = null;
         if (iniFileSettings != null)
         {
-            if (commandLineOptions.IniFile == null)
+            if (copiedCommandLineOptions.IniFile == null)
             {
                 tempIniFile = Path.GetTempFileName();
-                commandLineOptions.IniFile = tempIniFile;
+                copiedCommandLineOptions.IniFile = tempIniFile;
             }
-            iniFileSettings.SaveToFile(commandLineOptions.IniFile);
+            iniFileSettings.SaveToFile(copiedCommandLineOptions.IniFile);
         }
-
-        var winMergeArguments = commandLineOptions.ToArguments();
 
         var startInfo = new ProcessStartInfo
         {
             FileName = winMergeUExePath,
-            Arguments = winMergeArguments,
-            WorkingDirectory = Environment.CurrentDirectory,
+            Arguments = copiedCommandLineOptions.ToArguments(),
         };
 
-        var process = Process.Start(startInfo)!;
-
+        var process = new Process
+        {
+            StartInfo = startInfo,
+        };
         process.Disposed += (sender, e) =>
         {
             if (tempIniFile != null)
@@ -87,8 +92,9 @@ public class WinMergeRapper(string winMergeUExePath)
         return process;
     }
 
-    private static void ValidatePath(string path)
+    private static void ValidatePath(string path, string paramName)
     {
+        ArgumentNullException.ThrowIfNull(path, paramName);
         if (!File.Exists(path) && !Directory.Exists(path))
         {
             var extension = Path.GetExtension(path);
@@ -100,6 +106,15 @@ public class WinMergeRapper(string winMergeUExePath)
             {
                 throw new FileNotFoundException(path);
             }
+        }
+    }
+
+    private static void ValidateFilePath(string path, string paramName)
+    {
+        ArgumentNullException.ThrowIfNull(path, paramName);
+        if (!File.Exists(path))
+        {
+            throw new FileNotFoundException(path);
         }
     }
 }
